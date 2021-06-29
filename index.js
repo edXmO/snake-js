@@ -5,13 +5,12 @@ const ctx = canvas.getContext('2d');
 
 const grid = [];
 
-const WIDTH = 500;
-const HEIGHT = 500;
-const RES = 20;
+const WIDTH = 600;
+const HEIGHT = 600;
+const RES = Math.floor(Math.sqrt(WIDTH))
 
-let maxFps = 120;
-let frameTime;
-let animationFrameID;
+let maxFps = 30;
+let timestamp;
 
 const ROWS = HEIGHT / RES;
 const COLS = WIDTH / RES;
@@ -43,7 +42,7 @@ class Snake {
     }
 
     getIndex() {
-        return this.x + this.y / ROWS;
+        return this.x + this.y / RES;
     }
 
     update(key) {
@@ -53,16 +52,16 @@ class Snake {
                 this.y = grid[snake.getIndex() - 1].y;
                 break;
             case "ArrowRight":
-                this.x = grid[snake.getIndex() + ROWS].x;
-                this.y = grid[snake.getIndex() + ROWS].y;
+                this.x = grid[snake.getIndex() + RES].x;
+                this.y = grid[snake.getIndex() + RES].y;
                 break;
             case "ArrowDown":
                 this.x = grid[snake.getIndex() + 1].x;
                 this.y = grid[snake.getIndex() + 1].y;
                 break;
             case "ArrowLeft":
-                this.x = grid[snake.getIndex() - ROWS].x;
-                this.y = grid[snake.getIndex() - ROWS].y;
+                this.x = grid[snake.getIndex() - RES].x;
+                this.y = grid[snake.getIndex() - RES].y;
                 break;
         }
     }
@@ -84,7 +83,7 @@ class Food {
 const fillGrid = () => {
     for (let i = 0; i < ROWS; i++) {
         for (let j = 0; j < COLS; j++) {
-            let cell = new Cell(i * ROWS, j * COLS, RES, RES);
+            let cell = new Cell(i * RES, j * RES, RES, RES);
             grid.push(cell);
         }
     }
@@ -109,6 +108,7 @@ snake.show();
 window.addEventListener('keydown', (e) => {
     const { key } = e;
     snake.update(key);
+    snake.show();
 }, true);
 
 
@@ -123,6 +123,4 @@ const tick = (timestamp) => {
 
     animationFrameID = requestAnimationFrame(tick)
 }
-
-tick();
 
