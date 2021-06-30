@@ -11,6 +11,7 @@ const RES = 20;
 
 let maxFps = 30;
 let timestamp;
+let frameTime;
 
 const ROWS = HEIGHT / RES;
 const COLS = WIDTH / RES;
@@ -68,15 +69,23 @@ class Snake {
 
     show() {
         ctx.beginPath();
-        ctx.lineTo(this.x, this.y);
         ctx.fillStyle = "red"
         ctx.fillRect(this.x, this.y, this.w, this.h);
     }
 }
 
 class Food {
-    constructor() {
+    constructor(x, y, w, h) {
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+    }
 
+    place(){ 
+        ctx.beginPath();
+        ctx.fillStyle = "lightgreen";
+        ctx.fillRect(this.x, this.y, this.w, this.h);
     }
 }
 
@@ -95,6 +104,16 @@ const drawGrid = () => {
     }
 }
 
+
+const placeRandomFood = () => {
+    let randCell = Math.floor(Math.random() * grid.length);
+
+    let food = new Food(grid[randCell].x, grid[randCell].y ,grid[randCell].w ,grid[randCell].h);
+
+    food.place();
+}
+
+
 const setup = () => {
     fillGrid();
     drawGrid();
@@ -112,7 +131,8 @@ window.addEventListener('keydown', (e) => {
 }, true);
 
 
-console.log(grid);
+intervalID = setInterval(() => placeRandomFood(), 5000);
+
 
 const tick = (timestamp) => {
     if (timestamp < frameTime + (1000 / maxFps)) {
@@ -123,6 +143,10 @@ const tick = (timestamp) => {
 
     snake.show();
 
+    // placeRandomFood();
+
     animationFrameID = requestAnimationFrame(tick)
 }
+
+// tick();
 
