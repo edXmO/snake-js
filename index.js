@@ -9,7 +9,7 @@ const WIDTH = 400;
 const HEIGHT = 400;
 const RES = 20;
 
-let maxFps = 30;
+let maxFps = 400;
 let timestamp;
 let frameTime;
 
@@ -36,18 +36,26 @@ class Cell {
 
 class Snake {
     constructor(x, y) {
+        this.body = [];
         this.x = x;
         this.y = y;
         this.h = RES;
         this.w = RES;
+        this.dir = null;
     }
 
     getIndex(){
         return this.x + this.y / RES;
     }
 
-    update(key) {
-        switch (key) {
+    // Nota para que siga en una direccion concreta en cada
+    // momento podemos hacer un while que mantenga la suma de los indices
+    // en todo momento atendiendo a la ultima key presionada
+    // y atentos a dar la vuelta cuando lleguemos al borde
+
+    update(key = this.dir) {
+        this.dir = key;
+        switch (this.dir) {
             case "ArrowUp":
                 this.x = grid[snake.getIndex() - 1].x;
                 this.y = grid[snake.getIndex() - 1].y;
@@ -80,6 +88,7 @@ class Food {
         this.y = y;
         this.w = w;
         this.h = h;
+        this.points = 200;
     }
 
     place(){ 
@@ -113,7 +122,6 @@ const placeRandomFood = () => {
     food.place();
 }
 
-
 const setup = () => {
     fillGrid();
     drawGrid();
@@ -131,7 +139,7 @@ window.addEventListener('keydown', (e) => {
 }, true);
 
 
-intervalID = setInterval(() => placeRandomFood(), 5000);
+// intervalID = setInterval(() => placeRandomFood(), 5000);
 
 
 const tick = (timestamp) => {
@@ -142,11 +150,12 @@ const tick = (timestamp) => {
     frameTime = timestamp;
 
     snake.show();
-
+    drawGrid();
+    snake.update();
     // placeRandomFood();
 
     animationFrameID = requestAnimationFrame(tick)
 }
 
-// tick();
+tick();
 
